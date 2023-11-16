@@ -59,4 +59,6 @@ app.use(helmet());
 app.use("/api/auth", userRoutes);
 app.use("/api/sauces", sauceRoutes);
 
-module.exports = app;
+// Exportation de l'application pour Firebase Functions
+const functions = require("firebase-functions");
+exports.app = functions.https.onRequest(app);
