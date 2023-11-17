@@ -5,11 +5,20 @@
     "rewrites": [
       {
         "source": "**",
-        "function": "app"
+        "destination": "/index.html"
       }
     ]
   },
-  "functions": {
-    "source": "Backend"
-  }
+  "functions": [
+    {
+      "source": "Backend",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    }
+  ]
 }

@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+const cors = require("cors");
+
 const mongoose = require("mongoose");
 //Sécurité
 //On importe helmet" qui est un module Node.js qui permet de renforcer la sécurité de l'application en définissant différents en-têtes HTTP pour les réponses HTTP.
@@ -19,6 +21,16 @@ const path = require("path");
 //Importation du modèle "user"
 // const userThing = require('./models/user');
 
+//Configuration CORS spécifique
+const corsOptions = {
+  origin: "http://localhost:4200",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+
 //Connexion à MongoDB
 mongoose
   .connect(
@@ -28,18 +40,18 @@ mongoose
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-  );
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
+//   );
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+//   );
+//   next();
+// });
 
 app.use(express.json());
 
@@ -59,6 +71,8 @@ app.use(helmet());
 app.use("/api/auth", userRoutes);
 app.use("/api/sauces", sauceRoutes);
 
-// Exportation de l'application pour Firebase Functions
+// Exportation pour Firebase Functions
 const functions = require("firebase-functions");
-exports.app = functions.https.onRequest(app);
+const admin = require("firebase-admin");
+admin.initializeApp();
+exports.api = functions.https.onRequest(app);
